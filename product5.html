@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محصولات و سبد خرید</title>
+  <link rel="stylesheet" href="./bootstrap/FILE_76c534a7-daf5-4886-a2ac-49315e4f8dcc.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="website icon" type="png" href="./picture/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {   font-family: b koodak; margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --primary: #1ac7db; --primary-dark: #0f9aab; --primary-light: #a1e5f0; --gray-bg: #f8fafc; }
+    body { background-color: var(--gray-bg); padding: 20px; position: relative; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    /* هدر صفحه */
+    .page-header { background: white; border-radius: 30px; padding: 20px 30px; margin-bottom: 30px; box-shadow: 0 10px 25px -8px rgba(26,199,219,0.2); border: 1px solid var(--primary-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+    .page-header h1 { color: var(--primary-dark); font-weight: 700; font-size: 2rem; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .page-header h1 i { background: var(--primary); color: white; padding: 12px; border-radius: 50%; }
+    .filter-badge { background: var(--primary-light); padding: 8px 20px; border-radius: 40px; color: #022e36; font-weight: 500; }
+    
+    /* آیکون سبد خرید در هدر */
+    .cart-icon-header {
+      position: relative;
+      cursor: pointer;
+      background: var(--primary-light);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .cart-icon-header:hover { background: var(--primary); }
+    .cart-count-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff4757;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    /* کارت محصول */
+    .product-card { background: white; border-radius: 25px; overflow: hidden; border: 1px solid #e0f0f5; transition: 0.3s; height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 30px -8px var(--primary); border-color: var(--primary); }
+    .product-img { height: 200px; background-size: cover; background-position: center; position: relative; }
+    .discount-badge { position: absolute; top: 15px; right: 15px; background: #ff4757; color: white; padding: 5px 15px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; z-index: 2; }
+    .product-body { padding: 20px; }
+    .product-title { font-weight: 700; color: #1e3e45; margin-bottom: 8px; font-size: 1.2rem; }
+    .product-category { color: var(--primary-dark); font-size: 0.85rem; margin-bottom: 12px; display: block; }
+    .product-price { display: flex; align-items: center; gap: 12px; margin: 15px 0; }
+    .current-price { font-size: 1.5rem; font-weight: 700; color: #0f5b66; }
+    .old-price { text-decoration: line-through; color: #a4b8c2; font-size: 1rem; }
+    .rating { color: #ffc107; margin-bottom: 15px; }
+    .rating span { color: #7f8c8d; margin-right: 8px; }
+    .btn-add { background: var(--primary); border: none; border-radius: 50px; padding: 10px 20px; font-weight: 600; color: #022e36; width: 100%; transition: 0.2s; border: 1px solid var(--primary-light); }
+    .btn-add:hover { background: var(--primary-dark); color: white; }
+    
+    /* سایدبار سبد خرید */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      left: -400px;
+      width: 380px;
+      height: 100%;
+      background: white;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-sidebar.active { left: 0; }
+    .cart-sidebar-header {
+      padding: 20px;
+      border-bottom: 2px solid var(--primary-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-sidebar-header h4 { margin: 0; color: var(--primary-dark); }
+    .close-cart { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999; }
+    .close-cart:hover { color: #ff4757; }
+    .cart-items-list { flex: 1; overflow-y: auto; padding: 20px; }
+    .cart-item { display: flex; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+    .cart-item-img { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; }
+    .cart-item-info { flex: 1; }
+    .cart-item-title { font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
+    .cart-item-price { color: var(--primary-dark); font-weight: 700; font-size: 0.9rem; }
+    .cart-qty { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .cart-qty button { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; }
+    .cart-qty button:hover { background: var(--primary); color: white; }
+    .remove-item { color: #ff6b6b; background: none; border: none; font-size: 1rem; cursor: pointer; margin-right: 8px; }
+    .cart-footer { padding: 20px; border-top: 2px solid var(--primary-light); }
+    .total-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 15px; font-size: 1.1rem; }
+    .checkout-btn { background: var(--primary); border: none; border-radius: 50px; padding: 12px; width: 100%; font-weight: 700; margin-bottom: 10px; }
+    .checkout-btn:hover { background: var(--primary-dark); color: white; }
+    .clear-cart-btn { background: none; border: none; color: #ff6b6b; width: 100%; padding: 8px; }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.active { display: block; }
+    
+    .search-wrapper { display: flex; gap: 8px; background: white; border: 1px solid var(--primary-light); border-radius: 50px; padding: 5px 15px; }
+    .search-wrapper input { border: none; outline: none; background: transparent; }
+    .search-wrapper button { background: var(--primary); border: none; border-radius: 50px; padding: 5px 20px; }
+    
+    @media (max-width: 576px) {
+      .cart-sidebar { width: 100%; left: -100%; }
+      .page-header { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- هدر صفحه محصولات با آیکون سبد خرید -->
+  <div class="page-header">
+    <h1><i class="fas fa-box-open"></i> محصولات</h1>
+    <div class="search-wrapper">
+      <input id="searchProducts" type="text" style="position:relative ;" placeholder="جستجو">
+      <button style="position: absolute; right: 67%;"><i class="fas fa-search"></i> </button>
+    </div>
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <div class="filter-badge"><i class="fas fa-filter"></i> <span id="productCount">۱۲</span> محصول</div>
+      <div class="cart-icon-header" id="cartIcon">
+        <i class="fas fa-shopping-bag fa-lg"></i>
+        <span class="cart-count-badge" id="cartCount">0</span>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <!-- لیست محصولات -->
+  <div class="row g-4" id="productsContainer">
+    <!-- محصولات توسط JS رندر می‌شوند -->
+  </div>
+
+
+<!-- سایدبار سبد خرید -->
+<div class="overlay" id="overlay"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-sidebar-header">
+    <h4><i class="fas fa-shopping-bag"></i> سبد خرید</h4>
+    <button class="close-cart" id="closeCartBtn">&times;</button>
+  </div>
+  <div class="cart-items-list" id="cartItemsList">
+    <div class="text-center text-muted py-4">سبد خرید خالی است</div>
+  </div>
+  <div class="cart-footer">
+    <div class="total-row">
+      <span>جمع کل:</span>
+      <span id="cartTotalPrice">0 تومان</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">نهایی کردن خرید</button>
+    <button class="clear-cart-btn" id="clearCartBtn">حذف همه</button>
+  </div>
+</div>
+
+<script>
+  // ========== لیست محصولات ==========
+  const products = [
+  { id: 29, title: "ایرپاد", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب1.webp", discount: 80, rating: 2, reviews: 90 },
+  { id: 30, title: " هدفون", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب2.webp", discount: 80, rating: 2, reviews: 90 },
+  { id: 31, title: " ایرپاد", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب3.webp", discount: 80, rating: 2, reviews: 90 },
+  { id: 32, title: "ایرپاد", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب4.webp", discount: 80, rating: 2, reviews: 90 },
+  { id: 33, title: "ایرپاد", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب5.webp", discount: 80, rating: 2, reviews: 90 },
+  { id: 34, title: "هدفون", category: "سرویس خواب", price: 3280000, oldPrice: 550000, image: "./picture/خواب6.webp", discount: 80, rating: 2, reviews: 90 },
+
+  ];
+
+  // ========== سبد خرید ==========
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  // رندر ستاره‌ها
+  function renderRating(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) stars += '<i class="fas fa-star"></i>';
+      else if (i - 0.5 <= rating) stars += '<i class="fas fa-star-half-alt"></i>';
+      else stars += '<i class="far fa-star"></i>';
+    }
+    return stars;
+  }
+
+  // رندر محصولات
+  function renderProducts(filterCategory = 'همه', searchText = '') {
+    const container = document.getElementById('productsContainer');
+    if (!container) return;
+    
+    let filtered = products.filter(p => {
+      const matchCategory = filterCategory === 'همه' || p.category === filterCategory;
+      const matchSearch = p.title.includes(searchText) || p.category.includes(searchText);
+      return matchCategory && matchSearch;
+    });
+    
+    document.getElementById('productCount').innerText = filtered.length;
+    
+    if (filtered.length === 0) {
+      container.innerHTML = '<div class="col-12 text-center py-5">محصولی یافت نشد</div>';
+      return;
+    }
+    
+    container.innerHTML = filtered.map(product => `
+      <div class="col-lg-4 col-md-6">
+        <div class="product-card">
+          <div class="product-img" style="background-image: url('${product.image}');">
+            <span class="discount-badge">٪${product.discount}</span>
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">${product.title}</h3>
+            <span class="product-category"><i class="fas fa-tag"></i> ${product.category}</span>
+            <div class="rating">
+              ${renderRating(product.rating)}
+              <span>(${product.reviews})</span>
+            </div>
+            <div class="product-price">
+              <span class="current-price">${product.price.toLocaleString()} تومان</span>
+              <span class="old-price">${product.oldPrice.toLocaleString()}</span>
+            </div>
+            <button class="btn-add" onclick="addToCart(${product.id})">
+              <i class="fas fa-shopping-cart"></i> افزودن به سبد
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // اضافه کردن به سبد خرید
+  window.addToCart = function(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    const existing = cart.find(item => item.id === productId);
+    if (existing) {
+      existing.quantity++;
+    } else {
+      cart.push({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1
+      });
+    }
+    saveCart();
+    showNotification(`${product.title} به سبد خرید اضافه شد`);
+  };
+
+  // ذخیره و به‌روزرسانی
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartUI();
+  }
+
+  // به‌روزرسانی نمایش سبد خرید
+  function updateCartUI() {
+    const cartCountSpan = document.getElementById('cartCount');
+    const cartItemsList = document.getElementById('cartItemsList');
+    const cartTotalSpan = document.getElementById('cartTotalPrice');
+    
+    const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+    if (cartCountSpan) cartCountSpan.innerText = totalItems;
+    
+    if (!cartItemsList) return;
+    
+    if (cart.length === 0) {
+      cartItemsList.innerHTML = '<div class="text-center text-muted py-4">سبد خرید خالی است</div>';
+      if (cartTotalSpan) cartTotalSpan.innerText = '0 تومان';
+      return;
+    }
+    
+    let html = '';
+    let total = 0;
+    cart.forEach((item, idx) => {
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+      html += `
+        <div class="cart-item" data-index="${idx}">
+          <img class="cart-item-img" src="${item.image}" alt="${item.title}">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.title}</div>
+            <div class="cart-item-price">${item.price.toLocaleString()} تومان</div>
+            <div class="cart-qty">
+              <button onclick="changeQuantity(${idx}, -1)">-</button>
+              <span>${item.quantity}</span>
+              <button onclick="changeQuantity(${idx}, 1)">+</button>
+              <button class="remove-item" onclick="removeItem(${idx})"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    cartItemsList.innerHTML = html;
+    if (cartTotalSpan) cartTotalSpan.innerText = total.toLocaleString() + ' تومان';
+  }
+
+  window.changeQuantity = function(index, delta) {
+    if (cart[index]) {
+      const newQty = cart[index].quantity + delta;
+      if (newQty > 0) {
+        cart[index].quantity = newQty;
+      } else {
+        cart.splice(index, 1);
+      }
+      saveCart();
+    }
+  };
+
+  window.removeItem = function(index) {
+    cart.splice(index, 1);
+    saveCart();
+  };
+//notification
+  function showNotification(msg) {
+    const notif = document.createElement('div');
+    notif.innerHTML = `<i class="fas fa-check-circle me-2"></i> ${msg}`;
+    notif.style.cssText = `
+      position: fixed; bottom: 20px; right: 20px; background: #1ac7db; color: white;
+      padding: 12px 25px; border-radius: 50px; z-index: 1100; 
+      animation: fadeInOut 2.5s ease forwards;
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 2500);
+  }
+
+  // فیلتر و جستجو
+  function filterAndSearch() {
+    const selectedRadio = document.querySelector('input[name="category"]:checked');
+    const category = selectedRadio ? selectedRadio.value : 'همه';
+    const searchText = document.getElementById('searchProducts')?.value || '';
+    renderProducts(category, searchText);
+  }
+
+  //   offsetسایدبار سبد خرید
+  const cartIcon = document.getElementById('cartIcon');
+  const cartSidebar = document.getElementById('cartSidebar');
+  const overlay = document.getElementById('overlay');
+  const closeCartBtn = document.getElementById('closeCartBtn');
+  
+  function openCart() {
+    cartSidebar.classList.add('active');
+    overlay.classList.add('active');
+  }
+  function closeCart() {
+    cartSidebar.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+  
+  cartIcon?.addEventListener('click', openCart);
+  closeCartBtn?.addEventListener('click', closeCart);
+  overlay?.addEventListener('click', closeCart);
+  
+  // پرداخت
+  document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+    if (cart.length === 0) {
+      alert('سبد خرید خالی است');
+      return;
+    }
+    alert('سفارش شما با موفقیت ثبت شد!');
+    cart = [];
+    saveCart();
+    closeCart();
+  });
+  
+  // حذف همه
+  document.getElementById('clearCartBtn')?.addEventListener('click', () => {
+    if (cart.length && confirm('حذف تمام محصولات از سبد خرید؟')) {
+      cart = [];
+      saveCart();
+    }
+  });
+  
+  // رویدادهای فیلتر و جستجو
+  document.querySelectorAll('input[name="category"]').forEach(radio => {
+    radio.addEventListener('change', filterAndSearch);
+  });
+  document.getElementById('searchProducts')?.addEventListener('input', filterAndSearch);
+  document.querySelector('.search-wrapper button')?.addEventListener('click', filterAndSearch);
+  
+  // انیمیشن
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(30px); }
+      15% { opacity: 1; transform: translateX(0); }
+      85% { opacity: 1; }
+      100% { opacity: 0; transform: translateX(30px); }
+    }
+  `;
+  document.head.appendChild(style);
+  
+
+  // مقداردهی اولیه
+  renderProducts();
+  updateCartUI();
+</script>
+</body>
+</html>

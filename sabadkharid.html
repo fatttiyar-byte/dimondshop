@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سبد خرید </title>
+  <link rel="stylesheet" href="./bootstrap/FILE_76c534a7-daf5-4886-a2ac-49315e4f8dcc.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      font-family: b koodak;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --primary: #1ac7db;
+      --primary-dark: #0f9aab;
+      --primary-light: #a1e5f0;
+      --gray-bg: #f8fafc;
+      --dark: #2d3e50;
+      --border: #e0e6ed;
+    }
+    body {
+      background: var(--gray-bg);
+      padding: 40px 20px;
+    }
+    .cart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* هدر */
+    .cart-header {
+      background: white;
+      border-radius: 28px;
+      padding: 20px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+      border: 1px solid var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .cart-header h1 {
+      color: var(--primary-dark);
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cart-header h1 i {
+      background: var(--primary);
+      color: white;
+      padding: 12px;
+      border-radius: 50%;
+    }
+    .cart-count-badge {
+      background: var(--primary-light);
+      color: #022e36;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+    }
+    /* آیتم سبد خرید */
+    .cart-item-card {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      transition: 0.25s ease;
+    }
+    .cart-item-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(26,199,219,0.08);
+    }
+    .item-img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 20px;
+      background: #f0f7fa;
+    }
+    .item-title {
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+    .item-category {
+      font-size: 0.8rem;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+    .current-price {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #0f5b66;
+    }
+    .old-price {
+      text-decoration: line-through;
+      color: #a4b8c2;
+      font-size: 0.85rem;
+      margin-right: 10px;
+    }
+    /* کنترل تعداد */
+    .quantity-wrapper {
+      display: inline-flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 60px;
+      padding: 4px;
+    }
+    .qty-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .qty-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .qty-value {
+      width: 45px;
+      text-align: center;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+    }
+    .remove-item {
+      background: none;
+      border: none;
+      color: #ff6b6b;
+      transition: 0.2s;
+      font-size: 1.2rem;
+    }
+    .remove-item:hover {
+      color: #e63946;
+      transform: scale(1.1);
+    }
+    /* بخش خلاصه سفارش */
+    .cart-summary-card {
+      background: white;
+      border-radius: 28px;
+      padding: 25px;
+      border: 1px solid var(--primary-light);
+      position: sticky;
+      top: 20px;
+    }
+    .summary-title {
+      font-weight: 800;
+      color: var(--primary-dark);
+      border-right: 4px solid var(--primary);
+      padding-right: 12px;
+      margin-bottom: 20px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: #2c5f6b;
+    }
+    .summary-total {
+      border-top: 2px dashed var(--primary-light);
+      padding-top: 18px;
+      margin-top: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #022e36;
+    }
+    .checkout-btn {
+      background: var(--primary);
+      border: none;
+      border-radius: 50px;
+      padding: 14px;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 20px;
+      transition: 0.25s;
+    }
+    .checkout-btn:hover {
+      background: var(--primary-dark);
+      color: white;
+      transform: translateY(-2px);
+    }
+    /* سبد خرید خالی */
+    .empty-cart {
+      text-align: center;
+      background: white;
+      border-radius: 30px;
+      padding: 60px 20px;
+    }
+    .empty-cart i {
+      font-size: 5rem;
+      color: var(--primary-light);
+      margin-bottom: 20px;
+    }
+    /* کوپن */
+    .coupon-box input {
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+    }
+    .coupon-box button {
+      border-radius: 50px;
+      background: var(--primary-light);
+      border: none;
+      padding: 10px 22px;
+      font-weight: 500;
+    }
+    @media (max-width: 768px) {
+      .cart-header { flex-direction: column; text-align: center; }
+      .item-img { width: 70px; height: 70px; }
+    }
+  </style>
+</head>
+<body>
+<div class="cart-container">
+  <!-- هدر سبد خرید -->
+  <div class="cart-header">
+    <h1><i class="fas fa-shopping-bag"></i> سبد خرید</h1>
+    <div class="cart-count-badge" id="cartCountDisplay">۰ محصول</div>
+  </div>
+
+  <div class="row g-4">
+    <!-- سمت راست: لیست محصولات -->
+    <div class="col-lg-8" id="cartItemsWrapper">
+      <!-- آیتم‌ها توسط JS رندر می‌شوند -->
+      <div id="cartItemsList"></div>
+    </div>
+
+    <!-- سمت چپ: خلاصه سبد خرید -->
+    <div class="col-lg-4">
+      <div class="cart-summary-card">
+        <h5 class="summary-title"><i class="fas fa-receipt"></i> خلاصه سفارش</h5>
+        <div class="summary-row">
+          <span>قیمت کالاها</span>
+          <span id="subtotalValue">۰ تومان</span>
+        </div>
+        <div class="summary-row">
+          <span>تخفیف</span>
+          <span id="discountValue" class="text-danger">۰ تومان</span>
+        </div>
+        <div class="summary-row">
+          <span>ارسال</span>
+          <span id="shippingValue">رایگان</span>
+        </div>
+        <div class="summary-total d-flex justify-content-between">
+          <span>قابل پرداخت</span>
+          <span id="totalPrice">۰ تومان</span>
+        </div>
+        
+        <!-- کوپن تخفیف -->
+        <div class="coupon-box mt-4">
+          <div class="d-flex gap-2">
+            <input type="text" id="couponCode" class="form-control" placeholder="کد تخفیف">
+            <button id="applyCouponBtn">اعمال</button>
+          </div>
+          <div id="couponMessage" class="small mt-2 text-danger"></div>
+        </div>
+
+        <button class="checkout-btn" id="checkoutBtn"><i class="fas fa-credit-card"></i> نهایی کردن خرید</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- مدیریت سبد خرید ----------
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let appliedCoupon = null;   // {percent, code}
+
+  // عناصر DOM
+  const cartItemsList = document.getElementById('cartItemsList');
+  const cartCountDisplay = document.getElementById('cartCountDisplay');
+  const subtotalValue = document.getElementById('subtotalValue');
+  const discountValue = document.getElementById('discountValue');
+  const totalPriceSpan = document.getElementById('totalPrice');
+
+  // توابع کمکی
+  function formatPrice(price) {
+    return price.toLocaleString() + ' تومان';
+  }
+
+  // ذخیره در localStorage و به‌روزرسانی UI
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
+
+  // محاسبه ساب‌توتال و تخفیف و نهایی
+  function calculateTotals() {
+    let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let discountAmount = 0;
+    if (appliedCoupon) {
+      discountAmount = Math.floor(subtotal * appliedCoupon.percent / 100);
+    }
+    let total = subtotal - discountAmount;
+    return { subtotal, discountAmount, total };
+  }
+
+  // رندر سبد خرید + خلاصه
+  function renderCart() {
+    // رندر لیست آیتم‌ها
+    if (!cartItemsList) return;
+    if (cart.length === 0) {
+      cartItemsList.innerHTML = `
+        <div class="empty-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <h4>سبد خرید شما خالی است</h4>
+          <p>محصولات مورد نظر خود را از فروشگاه اضافه کنید</p>
+          <a href="./index.html" class="btn btn-primary rounded-pill px-4" style="background:#1ac7db; border:0;">رفتن به فروشگاه</a>
+        </div>
+      `;
+      if(cartCountDisplay) cartCountDisplay.innerText = '۰ محصول';
+      subtotalValue.innerText = formatPrice(0);
+      discountValue.innerText = formatPrice(0);
+      totalPriceSpan.innerText = formatPrice(0);
+      return;
+    }
+
+    let html = '';
+    cart.forEach((item, idx) => {
+      html += `
+        <div class="cart-item-card" data-index="${idx}">
+          <div class="row align-items-center gy-3">
+            <div class="col-md-3 col-4">
+              <img class="item-img w-100" src="${item.image}" alt="${item.title}">
+            </div>
+            <div class="col-md-5 col-8">
+              <div class="item-title">${item.title}</div>
+              <div class="item-category">${item.category || 'محصولات '}</div>
+              <div>
+                <span class="current-price">${formatPrice(item.price)}</span>
+                ${item.oldPrice ? `<span class="old-price">${formatPrice(item.oldPrice)}</span>` : ''}
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="quantity-wrapper">
+                  <button class="qty-btn decQty" data-idx="${idx}">−</button>
+                  <input type="text" class="qty-value" value="${item.quantity}" readonly>
+                  <button class="qty-btn incQty" data-idx="${idx}">+</button>
+                </div>
+                <button class="remove-item" data-idx="${idx}"><i class="fas fa-trash-alt"></i> حذف</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    cartItemsList.innerHTML = html;
+
+    // آپدیت تعداد کلی
+    const totalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+    if(cartCountDisplay) cartCountDisplay.innerText = totalCount + ' محصول';
+
+    // محاسبه و نمایش مبالغ
+    const { subtotal, discountAmount, total } = calculateTotals();
+    subtotalValue.innerText = formatPrice(subtotal);
+    discountValue.innerText = discountAmount > 0 ? `-${formatPrice(discountAmount)}` : '۰ تومان';
+    totalPriceSpan.innerText = formatPrice(total);
+
+    // اتصال رویدادها
+    document.querySelectorAll('.decQty').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.idx);
+        if (cart[idx].quantity > 1) cart[idx].quantity--;
+        else cart.splice(idx, 1);
+        if (cart.length === 0) appliedCoupon = null;
+        saveCart();
+      });
+    });
+    document.querySelectorAll('.incQty').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.idx);
+        cart[idx].quantity++;
+        saveCart();
+      });
+    });
+    document.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.idx);
+        cart.splice(idx, 1);
+        if (cart.length === 0) appliedCoupon = null;
+        saveCart();
+      });
+    });
+  }
+
+
+
+  // نهایی کردن خرید
+  function checkout() {
+    if (cart.length === 0) {
+      alert('سبد خرید شما خالی است');
+      return;
+    }
+    alert(`خرید شما با موفقیت ثبت شد!\nمبلغ قابل پرداخت: ${totalPriceSpan.innerText}\nاز اعتماد شما سپاسگزاریم.`);
+    cart = [];
+    appliedCoupon = null;
+    saveCart();
+  }
+
+  // ---- رویدادها ----
+  document.getElementById('applyCouponBtn')?.addEventListener('click', () => {
+    const codeInput = document.getElementById('couponCode');
+    applyCoupon(codeInput.value.trim());
+  });
+  document.getElementById('clearCartBtn')?.addEventListener('click', clearCart);
+  document.getElementById('checkoutBtn')?.addEventListener('click', checkout);
+
+  // بارگذاری اولیه
+  renderCart();
+
+
+  
+</script>
+<script src="./bootstrap/FILE_f4080421-dc4a-48f4-b9b7-514e78521c84.js"></script>
+</body>
+</html>
